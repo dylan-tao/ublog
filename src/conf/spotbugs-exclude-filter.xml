@@ -14,11 +14,9 @@
   <Match>
     <Bug pattern="CT_CONSTRUCTOR_THROW" />
   </Match>
-  <!-- Fundamental disagreement with SB: It should be OK to have predefined instances and allow new instances. -->
   <Match>
     <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
   </Match>
-  <!-- Fundamental disagreement with SB: It should be OK to have predefined instances and allow new instances. -->
   <Match>
     <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
   </Match>

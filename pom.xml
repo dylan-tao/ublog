@@ -4,21 +4,66 @@
 
     <groupId>com.javaosc</groupId>
     <artifactId>ublog</artifactId>
+    <version>${revision}</version>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
 
-    <name>you blog, aha</name>
-    <url>http://maven.apache.org</url>
+    <name>ublog</name>
+    <inceptionYear>2025</inceptionYear>
+    <description>Your(U) mini and faster java blog or content management application</description>
+    <url>https://ublog.javaosc.com</url>
+
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+
         <java.version>17</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <maven.pmd.plugin.version>3.26.0</maven.pmd.plugin.version>
-        <maven.spotbugs.plugin.version>4.8.6.6</maven.spotbugs.plugin.version>
+        <project.build.locale>zh_CN</project.build.locale>
+        <project.build.timeZone>GMT+8</project.build.timeZone>
+        <project.build.archiver.directory>${project.build.directory}/maven-archiver</project.build.archiver.directory>
+
+        <maven.plugin.flatten.version>1.7.2</maven.plugin.flatten.version>
+        <maven.plugin.license.version>5.0.0</maven.plugin.license.version>
+        <maven.plugin.jar.version>3.4.2</maven.plugin.jar.version>
+        <maven.plugin.taglist.version>3.2.1</maven.plugin.taglist.version>
+        <maven.plugin.pmd.version>3.26.0</maven.plugin.pmd.version>
+        <maven.plugin.spotbugs.version>4.8.6.6</maven.plugin.spotbugs.version>
     </properties>
+
+    <organization>
+        <name>Java Open Source Community</name>
+        <url>https://www.javaosc.org</url>
+    </organization>
+
+    <scm>
+        <connection>git@github.com:dylan-tao/ublog.git</connection>
+        <url>https://github.com/dylan-tao/ublog.git</url>
+        <tag>${revision}</tag>
+    </scm>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/dylan-tao/ublog/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <name>ublog</name>
+            <email>ublog@javaosc.com</email>
+            <organization>Javaosc UBlog Team</organization>
+            <organizationUrl>https://ublog.javaosc.com</organizationUrl>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -29,8 +74,185 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <finalName>ublog</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${maven.plugin.flatten.version}</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <keepCommentsInPom>false</keepCommentsInPom>
+                    <flattenedPomFilename>pom.xml</flattenedPomFilename>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${maven.plugin.license.version}</version>
+                <executions>
+                    <execution>
+                        <id>license</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>remove</goal>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <quiet>true</quiet>
+                    <strictCheck>true</strictCheck>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${project.basedir}/src/conf/HEADER</header>
+                            <includes>
+                                <include>**/src/main/java/**</include>
+                                <include>**/src/test/java/**</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <reportFormat>xml</reportFormat>
+                    <reportLocation>${project.build.archiver.directory}/license-maven-cache.xml</reportLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.plugin.jar.version}</version>
+                <configuration>
+                    <addDefaultExcludes>true</addDefaultExcludes>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
+                            <addDefaultEntries>false</addDefaultEntries>
+                            <addBuildEnvironmentEntries>false</addBuildEnvironmentEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <Implementation-Vendor>${project.developers[0].organization}</Implementation-Vendor>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <Implementation-Url>${project.developers[0].organizationUrl}</Implementation-Url>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <Implementation-Email>${project.developers[0].email}</Implementation-Email>
+
+                            <Project-Build-Jdk>${maven.compiler.release}</Project-Build-Jdk>
+                            <Project-Build-GroupId>${project.groupId}</Project-Build-GroupId>
+                            <Project-Build-Locale>${project.build.locale}</Project-Build-Locale>
+                            <Project-Build-TimeZone>${project.build.timeZone}</Project-Build-TimeZone>
+
+                            <!--suppress UnresolvedMavenProperty -->
+                            <Specification-Title>Javaosc</Specification-Title>
+                            <Specification-Vendor>${project.organization.name}</Specification-Vendor>
+                            <Specification-Version>${revision}</Specification-Version>
+                            <Specification-Url>${project.organization.url}</Specification-Url>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>${maven.plugin.taglist.version}</version>
+                <configuration>
+                    <emptyComments>true</emptyComments>
+                    <skipTestSources>true</skipTestSources>
+                    <multipleLineComments>true</multipleLineComments>
+                    <sourceFileLocale>${project.build.locale}</sourceFileLocale>
+                    <outputTimestamp>${maven.build.timestamp}</outputTimestamp>
+                    <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                    <xmlOutputDirectory>${project.build.archiver.directory}/taglist</xmlOutputDirectory>
+                    <tagListOptions>
+                        <tagClasses>
+                            <tagClass>
+                                <displayName>Pending TODO Checklist</displayName>
+                                <tags>
+                                    <tag>
+                                        <matchString>TODO</matchString>
+                                        <matchType>ignoreCase</matchType>
+                                    </tag>
+                                </tags>
+                            </tagClass>
+                            <tagClass>
+                                <displayName>Pending FIXME Checklist</displayName>
+                                <tags>
+                                    <tag>
+                                        <matchString>FIXME</matchString>
+                                        <matchType>ignoreCase</matchType>
+                                    </tag>
+                                </tags>
+                            </tagClass>
+                            <tagClass>
+                                <displayName>Pending NOPMD Checklist</displayName>
+                                <tags>
+                                    <tag>
+                                        <matchString>NOPMD</matchString>
+                                        <matchType>ignoreCase</matchType>
+                                    </tag>
+                                </tags>
+                            </tagClass>
+                        </tagClasses>
+                    </tagListOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven.plugin.pmd.version}</version>
+                <configuration>
+                    <format>none</format>
+                    <linkXRef>false</linkXRef>
+                    <includeTests>false</includeTests>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <targetJdk>${java.version}</targetJdk>
+                    <renderRuleViolationPriority>true</renderRuleViolationPriority>
+                    <renderSuppressedViolations>false</renderSuppressedViolations>
+                    <renderViolationsByPriority>false</renderViolationsByPriority>
+                    <targetDirectory>${project.build.archiver.directory}/pmd</targetDirectory>
+                    <rulesetsTargetDirectory>${project.build.archiver.directory}/pmd</rulesetsTargetDirectory>
+                    <rulesets>
+                        <ruleset>${project.basedir}/src/conf/pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${maven.plugin.spotbugs.version}</version>
+                <configuration>
+                    <excludeFilterFile>${project.basedir}/src/conf/spotbugs-exclude-filter.xml</excludeFilterFile>
+                    <htmlOutput>true</htmlOutput>
+                    <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                    <spotbugsXmlOutputDirectory>${project.build.archiver.directory}/spotbugs</spotbugsXmlOutputDirectory>
+                    <spotbugsXmlOutputFilename>spotbugs.xml</spotbugsXmlOutputFilename>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
